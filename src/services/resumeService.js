@@ -1,15 +1,35 @@
 import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
+import { get, ref as dbRef } from "firebase/database";
+import { db } from "../firebase";
 
 const storage = getStorage();
 
 export async function getAllResumes() {
   const resumesRef = ref(storage, "resumes");
   const result = await listAll(resumesRef);
-  
+
+  const getResumeName = async (resumeId) => {
+    const snapshot = await get(dbRef(db, `resumes/${resumeId}`));
+    return snapshot.val().name;
+  };
+
+  const getResumeMatchScore = async (resumeId) => {
+    const snapshot = await get(dbRef(db, `resumes/${resumeId}`));
+    return snapshot.val().match;
+  };
+
+  const getResumeSkills = async (resumeId) => {
+    const snapshot = await get(dbRef(db, `resumes/${resumeId}`));
+    return snapshot.val().skills;
+  };
+
   const resumeList = await Promise.all(
     result.items.map(async (itemRef) => {
       const url = await getDownloadURL(itemRef);
-      return { name: itemRef.name, url };
+      const name = await getResumeName(itemRef.name);
+      const match = await getResumeMatchScore(itemRef.name);
+      const skills = await getResumeSkills(itemRef.name);
+      return { name, url, match, skills };
     })
   );
 

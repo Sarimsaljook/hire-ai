@@ -5,11 +5,6 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 export default function Dashboard() {
-  const [resumes, setResumes] = useState([]);
-
-  const handleNewResume = (resume) => {
-    setResumes((prev) => [...prev, resume]);
-  };
 
   return (
     <div className="flex">
@@ -17,8 +12,7 @@ export default function Dashboard() {
       <div className="flex-1">
         <Navbar />
         <div className="p-6 grid grid-cols-2 gap-6">
-          <UploadResume onUpload={handleNewResume} />
-          <ResumeList resumes={resumes} />
+          <ResumeList />
         </div>
       </div>
     </div>
